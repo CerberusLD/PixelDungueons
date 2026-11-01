@@ -68,6 +68,10 @@ var shot_mode: String = "gameplay" # "gameplay" o "dashboard"
 var shot_taken: bool = false
 var shot_elapsed: float = 0.0
 
+var mobile_touch_dir: Vector2 = Vector2.ZERO
+var mobile_touch_active: bool = false
+var mobile_touch_index: int = -1
+
 var player: Dictionary = {}
 var bots: Array[Dictionary] = []
 var goblins: Array[Dictionary] = []
@@ -1528,6 +1532,39 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif event.keycode == KEY_R:
 			start_dungeon_run(_state().selected_dungeon)
 
+	if event is InputEventScreenTouch:
+		if event.pressed:
+			mobile_touch_index = event.index
+			mobile_touch_active = true
+			var vp_size: Vector2 = get_viewport_rect().size
+			var half_x: float = vp_size.x * 0.5
+			if event.position.x < half_x:
+				# joystick zone
+				mobile_touch_dir = Vector2.ZERO
+			else:
+				# right side tap: mine
+				if round_active:
+					_try_mine_nearby(player, 0.35)
+		else:
+			if event.index == mobile_touch_index:
+				mobile_touch_active = false
+				mobile_touch_dir = Vector2.ZERO
+				mobile_touch_index = -1
+	elif event is InputEventScreenDrag and event.index == mobile_touch_index:
+		var vp_size2: Vector2 = get_viewport_rect().size
+		var half_x2: float = vp_size2.x * 0.5
+		if event.position.x < half_x2:
+			# joystick: direction from center of left half
+			var center: Vector2 = Vector2(vp_size2.x * 0.25, vp_size2.y * 0.5)
+			var d: Vector2 = event.position - center
+			if d.length() > 8.0:
+				mobile_touch_dir = d.normalized()
+			else:
+				mobile_touch_dir = Vector2.ZERO
+		else:
+			mobile_touch_dir = Vector2.ZERO
+
+
 	if round_active and event is InputEventMouseButton and event.pressed:
 		if dashboard_overlay != null and dashboard_overlay.visible:
 			return
@@ -1586,14 +1623,17 @@ func _update_player(delta: float) -> void:
 	player["mine_anim_timer"] = maxf(0.0, float(player.get("mine_anim_timer", 0.0)) - delta)
 
 	var dir := Vector2.ZERO
-	if Input.is_key_pressed(KEY_W) or Input.is_key_pressed(KEY_UP):
-		dir.y -= 1.0
-	if Input.is_key_pressed(KEY_S) or Input.is_key_pressed(KEY_DOWN):
-		dir.y += 1.0
-	if Input.is_key_pressed(KEY_A) or Input.is_key_pressed(KEY_LEFT):
-		dir.x -= 1.0
-	if Input.is_key_pressed(KEY_D) or Input.is_key_pressed(KEY_RIGHT):
-		dir.x += 1.0
+	if mobile_touch_active and mobile_touch_dir.length_squared() > 0.0:
+		dir = mobile_touch_dir
+	else:
+		if Input.is_key_pressed(KEY_W) or Input.is_key_pressed(KEY_UP):
+			dir.y -= 1.0
+		if Input.is_key_pressed(KEY_S) or Input.is_key_pressed(KEY_DOWN):
+			dir.y += 1.0
+		if Input.is_key_pressed(KEY_A) or Input.is_key_pressed(KEY_LEFT):
+			dir.x -= 1.0
+		if Input.is_key_pressed(KEY_D) or Input.is_key_pressed(KEY_RIGHT):
+			dir.x += 1.0
 
 	if dir.length_squared() > 0.0:
 		dir = dir.normalized()
