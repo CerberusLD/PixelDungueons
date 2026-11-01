@@ -1,0 +1,2242 @@
+{
+  "spec_version": "1.0.0",
+  "engine": "Cerberus Engine",
+  "permissions": [
+    "read",
+    "scene_write",
+    "script_write",
+    "resource_write",
+    "runtime",
+    "export",
+    "admin"
+  ],
+  "tools": {
+    "agent_list": {
+      "name": "agent_list",
+      "category": "workspace",
+      "description": "Lista agentes conectados, su tarea, permisos y última actividad.",
+      "permission": "read",
+      "side": "editor",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {},
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "agent_register": {
+      "name": "agent_register",
+      "category": "workspace",
+      "description": "Registra un agente con su nivel de permiso y devuelve su token de sesión.",
+      "permission": "read",
+      "side": "editor",
+      "mutating": true,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "agent_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "permission": {
+            "type": "string"
+          },
+          "task": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "agent_id"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "agent_update": {
+      "name": "agent_update",
+      "category": "workspace",
+      "description": "Actualiza tarea/estado visible de un agente en el workspace.",
+      "permission": "read",
+      "side": "editor",
+      "mutating": true,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "agent_id": {
+            "type": "string"
+          },
+          "task": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "asset_convert": {
+      "name": "asset_convert",
+      "category": "asset",
+      "description": "Convierte assets con ffmpeg/ImageMagick cuando están disponibles (wav->ogg, png->webp, ...).",
+      "permission": "resource_write",
+      "side": "host",
+      "mutating": true,
+      "timeout_ms": 120000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "source_path": {
+            "type": "string"
+          },
+          "target_path": {
+            "type": "string"
+          },
+          "options": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "source_path",
+          "target_path"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "asset_import": {
+      "name": "asset_import",
+      "category": "asset",
+      "description": "Copia un asset externo dentro del proyecto y fuerza la reimportación.",
+      "permission": "resource_write",
+      "side": "host",
+      "mutating": true,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "source_path": {
+            "type": "string"
+          },
+          "target_path": {
+            "type": "string"
+          },
+          "overwrite": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "source_path",
+          "target_path"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "asset_inspect": {
+      "name": "asset_inspect",
+      "category": "asset",
+      "description": "Metadatos de un asset: tamaño, dimensiones, formato, import settings activos.",
+      "permission": "read",
+      "side": "host",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "asset_list": {
+      "name": "asset_list",
+      "category": "asset",
+      "description": "Lista el contenido de un directorio del proyecto con tipo y tamaño.",
+      "permission": "read",
+      "side": "host",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "directory": {
+            "type": "string"
+          },
+          "recursive": {
+            "type": "boolean"
+          },
+          "limit": {
+            "type": "integer"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "asset_search": {
+      "name": "asset_search",
+      "category": "asset",
+      "description": "Busca assets por patrón de nombre, extensión o carpeta.",
+      "permission": "read",
+      "side": "host",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "pattern": {
+            "type": "string"
+          },
+          "extensions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "directory": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "integer"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "autoload_list": {
+      "name": "autoload_list",
+      "category": "project",
+      "description": "Lista los autoloads/singletons del proyecto.",
+      "permission": "read",
+      "side": "editor",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {},
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "autoload_set": {
+      "name": "autoload_set",
+      "category": "project",
+      "description": "Añade, actualiza o elimina un autoload.",
+      "permission": "resource_write",
+      "side": "editor",
+      "mutating": true,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "remove": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "changelog_list": {
+      "name": "changelog_list",
+      "category": "workspace",
+      "description": "Lista transacciones registradas (ficheros tocados, agente, hora) para auditoría y rollback.",
+      "permission": "read",
+      "side": "editor",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "type": "integer"
+          },
+          "agent_id": {
+            "type": "string"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "changelog_rollback": {
+      "name": "changelog_rollback",
+      "category": "workspace",
+      "description": "Revierte una transacción completa restaurando los backups.",
+      "permission": "admin",
+      "side": "editor",
+      "mutating": true,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "transaction_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "transaction_id"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "debugger_break": {
+      "name": "debugger_break",
+      "category": "debug",
+      "description": "Pausa el juego (tree.paused) para inspección.",
+      "permission": "runtime",
+      "side": "host",
+      "mutating": true,
+      "timeout_ms": 30000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "session_id": {
+            "type": "string"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "debugger_continue": {
+      "name": "debugger_continue",
+      "category": "debug",
+      "description": "Reanuda el juego pausado.",
+      "permission": "runtime",
+      "side": "host",
+      "mutating": true,
+      "timeout_ms": 30000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "session_id": {
+            "type": "string"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "debugger_get_errors": {
+      "name": "debugger_get_errors",
+      "category": "debug",
+      "description": "Alias enriquecido de runtime_get_errors con deduplicación y primer frame del stack.",
+      "permission": "read",
+      "side": "host",
+      "mutating": false,
+      "timeout_ms": 30000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "session_id": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "integer"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "debugger_get_stacktrace": {
+      "name": "debugger_get_stacktrace",
+      "category": "debug",
+      "description": "Devuelve el stack GDScript del último error capturado (fichero, función, línea).",
+      "permission": "read",
+      "side": "host",
+      "mutating": false,
+      "timeout_ms": 30000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "session_id": {
+            "type": "string"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "debugger_inspect_variables": {
+      "name": "debugger_inspect_variables",
+      "category": "debug",
+      "description": "Inspecciona propiedades y variables del script de un nodo vivo.",
+      "permission": "runtime",
+      "side": "host",
+      "mutating": false,
+      "timeout_ms": 30000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "session_id": {
+            "type": "string"
+          },
+          "node_path": {
+            "type": "string"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "debugger_step": {
+      "name": "debugger_step",
+      "category": "debug",
+      "description": "Avanza N frames de proceso mientras el juego está pausado (step manual).",
+      "permission": "runtime",
+      "side": "host",
+      "mutating": true,
+      "timeout_ms": 30000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "session_id": {
+            "type": "string"
+          },
+          "frames": {
+            "type": "integer"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "editor_godot": {
+      "name": "editor_godot",
+      "category": "workspace",
+      "description": "Devuelve la versión de Godot, renderer activo y plataforma.",
+      "permission": "read",
+      "side": "editor",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {},
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "editor_ping": {
+      "name": "editor_ping",
+      "category": "workspace",
+      "description": "Comprueba conectividad con el plugin del editor y devuelve versión y estado.",
+      "permission": "read",
+      "side": "editor",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {},
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "editor_quit": {
+      "name": "editor_quit",
+      "category": "workspace",
+      "description": "Guarda la escena y solicita el cierre del editor (en headless el bridge puede completar con SIGTERM).",
+      "permission": "admin",
+      "side": "editor",
+      "mutating": true,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "save": {
+            "type": "boolean"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "editor_rescan": {
+      "name": "editor_rescan",
+      "category": "workspace",
+      "description": "Fuerza un rescaneo del sistema de ficheros del editor (necesario tras crear ficheros desde fuera).",
+      "permission": "read",
+      "side": "editor",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {},
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "input_map_get": {
+      "name": "input_map_get",
+      "category": "project",
+      "description": "Devuelve el input map del proyecto.",
+      "permission": "read",
+      "side": "editor",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "type": "string"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "input_map_set": {
+      "name": "input_map_set",
+      "category": "project",
+      "description": "Crea o modifica una acción de input con eventos de teclado/ratón.",
+      "permission": "resource_write",
+      "side": "editor",
+      "mutating": true,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "deadzone": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "action",
+          "events"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "lock_acquire": {
+      "name": "lock_acquire",
+      "category": "workspace",
+      "description": "Adquiere un lock sobre una ruta o nodo para evitar escrituras concurrentes.",
+      "permission": "read",
+      "side": "editor",
+      "mutating": true,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "resource": {
+            "type": "string"
+          },
+          "ttl_ms": {
+            "type": "integer"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "resource"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "lock_list": {
+      "name": "lock_list",
+      "category": "workspace",
+      "description": "Lista locks activos con dueño y TTL restante.",
+      "permission": "read",
+      "side": "editor",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {},
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "lock_release": {
+      "name": "lock_release",
+      "category": "workspace",
+      "description": "Libera un lock propio.",
+      "permission": "read",
+      "side": "editor",
+      "mutating": true,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "resource": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "resource"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "node_add_to_group": {
+      "name": "node_add_to_group",
+      "category": "node",
+      "description": "Añade o quita un nodo de un grupo.",
+      "permission": "scene_write",
+      "side": "editor",
+      "mutating": true,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "node_id": {
+            "type": "string"
+          },
+          "group": {
+            "type": "string"
+          },
+          "add": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "node_id",
+          "group"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "node_attach_script": {
+      "name": "node_attach_script",
+      "category": "node",
+      "description": "Adjunta (o desadjunta con script_path=null) un script a un nodo.",
+      "permission": "script_write",
+      "side": "editor",
+      "mutating": true,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "node_id": {
+            "type": "string"
+          },
+          "script_path": {
+            "type": "string"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "node_create": {
+      "name": "node_create",
+      "category": "node",
+      "description": "Crea un nodo de un tipo registrado (Node2D, Sprite2D, Label, ...) bajo un padre.",
+      "permission": "scene_write",
+      "side": "editor",
+      "mutating": true,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "parent_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "properties": {
+            "type": "object"
+          },
+          "scene_path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "node_delete": {
+      "name": "node_delete",
+      "category": "node",
+      "description": "Elimina el nodo y sus descendientes.",
+      "permission": "scene_write",
+      "side": "editor",
+      "mutating": true,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "node_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "node_id"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "node_duplicate": {
+      "name": "node_duplicate",
+      "category": "node",
+      "description": "Duplica un nodo (con sus hijos y propiedades).",
+      "permission": "scene_write",
+      "side": "editor",
+      "mutating": true,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "node_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "node_id"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "node_find": {
+      "name": "node_find",
+      "category": "node",
+      "description": "Busca nodos por nombre, tipo, grupo o script en la escena editada.",
+      "permission": "read",
+      "side": "editor",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name_pattern": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "group": {
+            "type": "string"
+          },
+          "has_script": {
+            "type": "boolean"
+          },
+          "limit": {
+            "type": "integer"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "node_get_children": {
+      "name": "node_get_children",
+      "category": "node",
+      "description": "Lista los hijos directos de un nodo.",
+      "permission": "read",
+      "side": "editor",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "node_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "node_id"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "node_get_property": {
+      "name": "node_get_property",
+      "category": "node",
+      "description": "Lee una propiedad o todas las propiedades persistentes del nodo.",
+      "permission": "read",
+      "side": "editor",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "node_id": {
+            "type": "string"
+          },
+          "property": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "node_id"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "node_reparent": {
+      "name": "node_reparent",
+      "category": "node",
+      "description": "Mueve un nodo bajo otro padre conservando el id estable y la transformación global.",
+      "permission": "scene_write",
+      "side": "editor",
+      "mutating": true,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "node_id": {
+            "type": "string"
+          },
+          "new_parent_id": {
+            "type": "string"
+          },
+          "keep_global_transform": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "node_id",
+          "new_parent_id"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "node_set_property": {
+      "name": "node_set_property",
+      "category": "node",
+      "description": "Asigna una o varias propiedades a un nodo (valores JSON convertidos al tipo real de la propiedad).",
+      "permission": "scene_write",
+      "side": "editor",
+      "mutating": true,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "node_id": {
+            "type": "string"
+          },
+          "properties": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "node_id",
+          "properties"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "node_set_transform": {
+      "name": "node_set_transform",
+      "category": "node",
+      "description": "Atajo para position/rotation/scale (2D) o position/rotation/scale (3D) de un nodo.",
+      "permission": "scene_write",
+      "side": "editor",
+      "mutating": true,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "node_id": {
+            "type": "string"
+          },
+          "position": {
+            "type": "object"
+          },
+          "rotation": {
+            "type": "number"
+          },
+          "scale": {
+            "type": "object"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "project_build": {
+      "name": "project_build",
+      "category": "build",
+      "description": "Exporta el proyecto a un preset (linux/x11 por defecto) o empaqueta un .pck.",
+      "permission": "export",
+      "side": "host",
+      "mutating": true,
+      "timeout_ms": 600000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "preset": {
+            "type": "string"
+          },
+          "output_path": {
+            "type": "string"
+          },
+          "debug": {
+            "type": "boolean"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "project_context": {
+      "name": "project_context",
+      "category": "project",
+      "description": "Contexto completo machine-readable: estructura, escenas, scripts, recursos, autoloads, input map, signals, dependencias.",
+      "permission": "read",
+      "side": "host",
+      "mutating": false,
+      "timeout_ms": 120000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "sections": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "max_files": {
+            "type": "integer"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "project_create": {
+      "name": "project_create",
+      "category": "project",
+      "description": "Crea un proyecto Godot completo (project.godot, escena principal, addon Cerberus, git init opcional).",
+      "permission": "scene_write",
+      "side": "host",
+      "mutating": true,
+      "timeout_ms": 60000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "main_scene": {
+            "type": "string"
+          },
+          "git": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "path",
+          "name"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "project_index": {
+      "name": "project_index",
+      "category": "project",
+      "description": "Construye/actualiza el índice incremental en .cerberus/index.json y devuelve estadísticas del diff.",
+      "permission": "read",
+      "side": "host",
+      "mutating": true,
+      "timeout_ms": 120000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "force": {
+            "type": "boolean"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "project_info": {
+      "name": "project_info",
+      "category": "project",
+      "description": "Devuelve nombre, ruta, versión Godot, escena principal, renderer y nº de ficheros.",
+      "permission": "read",
+      "side": "host",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "project_open": {
+      "name": "project_open",
+      "category": "project",
+      "description": "Abre un proyecto como proyecto activo del bridge (copia el addon si falta y reinicia el editor si cambiaba de proyecto).",
+      "permission": "scene_write",
+      "side": "host",
+      "mutating": true,
+      "timeout_ms": 120000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "project_run": {
+      "name": "project_run",
+      "category": "runtime",
+      "description": "Ejecuta el proyecto (o una escena) como proceso real, inyecta el agente de runtime y devuelve el session_id.",
+      "permission": "runtime",
+      "side": "host",
+      "mutating": true,
+      "timeout_ms": 60000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "project": {
+            "type": "string"
+          },
+          "scene": {
+            "type": "string"
+          },
+          "headless": {
+            "type": "boolean"
+          },
+          "resolution": {
+            "type": "string"
+          },
+          "args": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "project_search": {
+      "name": "project_search",
+      "category": "project",
+      "description": "Búsqueda estructural y textual en el proyecto (nodos, scripts, propiedades, texto).",
+      "permission": "read",
+      "side": "host",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "query": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "query"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "project_settings_get": {
+      "name": "project_settings_get",
+      "category": "project",
+      "description": "Lee un ajuste de proyecto o una sección completa.",
+      "permission": "read",
+      "side": "editor",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "section": {
+            "type": "string"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "project_settings_set": {
+      "name": "project_settings_set",
+      "category": "project",
+      "description": "Escribe un ajuste de proyecto (project.godot) y recarga el editor.",
+      "permission": "resource_write",
+      "side": "editor",
+      "mutating": true,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "value": {
+            "description": "valor JSON (string, número, bool, array u objeto)"
+          }
+        },
+        "required": [
+          "key",
+          "value"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "project_status": {
+      "name": "project_status",
+      "category": "runtime",
+      "description": "Estado del proceso de ejecución: pid, uptime, frames, fps, errores acumulados.",
+      "permission": "read",
+      "side": "host",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "session_id": {
+            "type": "string"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "project_stop": {
+      "name": "project_stop",
+      "category": "runtime",
+      "description": "Detiene el proceso de ejecución y devuelve el resumen de logs.",
+      "permission": "runtime",
+      "side": "host",
+      "mutating": true,
+      "timeout_ms": 30000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "session_id": {
+            "type": "string"
+          },
+          "force": {
+            "type": "boolean"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "resource_create": {
+      "name": "resource_create",
+      "category": "resource",
+      "description": "Crea un recurso .tres (Material, Theme, Animation, Curve, ...) con propiedades.",
+      "permission": "resource_write",
+      "side": "editor",
+      "mutating": true,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "properties": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "path",
+          "type"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "resource_import": {
+      "name": "resource_import",
+      "category": "resource",
+      "description": "Importa un archivo externo (imagen, audio, modelo) al proyecto y espera el .import.",
+      "permission": "resource_write",
+      "side": "host",
+      "mutating": true,
+      "timeout_ms": 60000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "source_path": {
+            "type": "string"
+          },
+          "target_dir": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "source_path"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "resource_inspect": {
+      "name": "resource_inspect",
+      "category": "resource",
+      "description": "Inspecciona un recurso: clase, propiedades persistentes, tamaño, dependencias.",
+      "permission": "read",
+      "side": "editor",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "resource_modify": {
+      "name": "resource_modify",
+      "category": "resource",
+      "description": "Modifica propiedades de un recurso .tres con backup para rollback.",
+      "permission": "resource_write",
+      "side": "editor",
+      "mutating": true,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "properties": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "path",
+          "properties"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "resource_validate": {
+      "name": "resource_validate",
+      "category": "resource",
+      "description": "Comprueba que un recurso carga sin errores y que sus dependencias existen.",
+      "permission": "read",
+      "side": "editor",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "runtime_capture_screenshot": {
+      "name": "runtime_capture_screenshot",
+      "category": "runtime",
+      "description": "Captura un PNG del juego en ejecución con resolución configurable y devuelve la ruta.",
+      "permission": "runtime",
+      "side": "host",
+      "mutating": false,
+      "timeout_ms": 30000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "session_id": {
+            "type": "string"
+          },
+          "width": {
+            "type": "integer"
+          },
+          "height": {
+            "type": "integer"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "runtime_execute_command": {
+      "name": "runtime_execute_command",
+      "category": "runtime",
+      "description": "Ejecuta una expresión/código GDScript en el juego en ejecución dentro de una sandbox controlada.",
+      "permission": "runtime",
+      "side": "host",
+      "mutating": true,
+      "timeout_ms": 30000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "session_id": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "timeout_ms": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "code"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "runtime_get_errors": {
+      "name": "runtime_get_errors",
+      "category": "runtime",
+      "description": "Devuelve sólo errores/warnings parseados con fichero, línea y mensaje.",
+      "permission": "read",
+      "side": "host",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "session_id": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "since_seq": {
+            "type": "integer"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "runtime_get_logs": {
+      "name": "runtime_get_logs",
+      "category": "runtime",
+      "description": "Devuelve logs del proceso (stdout/stderr) filtrados por nivel y patrón.",
+      "permission": "read",
+      "side": "host",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "session_id": {
+            "type": "string"
+          },
+          "level": {
+            "type": "string"
+          },
+          "pattern": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "since_seq": {
+            "type": "integer"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "runtime_inspect": {
+      "name": "runtime_inspect",
+      "category": "runtime",
+      "description": "Árbol de escena en ejecución: nodos vivos, transformaciones, visibilidad, texto de Controls.",
+      "permission": "runtime",
+      "side": "host",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "session_id": {
+            "type": "string"
+          },
+          "depth": {
+            "type": "integer"
+          },
+          "node_path": {
+            "type": "string"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "runtime_profile": {
+      "name": "runtime_profile",
+      "category": "runtime",
+      "description": "Perfilado del juego en ejecución: fps, tiempo de frame, draw calls, objetos, memoria de vídeo.",
+      "permission": "read",
+      "side": "host",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "session_id": {
+            "type": "string"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "scene_close": {
+      "name": "scene_close",
+      "category": "scene",
+      "description": "Cierra una escena abierta en el editor.",
+      "permission": "scene_write",
+      "side": "editor",
+      "mutating": true,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "scene_create": {
+      "name": "scene_create",
+      "category": "scene",
+      "description": "Crea una escena .tscn nueva y la abre en el editor. root_type por defecto Node2D.",
+      "permission": "scene_write",
+      "side": "editor",
+      "mutating": true,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "root_type": {
+            "type": "string",
+            "default": "Node2D"
+          },
+          "root_name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "root_type"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "scene_duplicate": {
+      "name": "scene_duplicate",
+      "category": "scene",
+      "description": "Duplica una escena .tscn a otra ruta.",
+      "permission": "scene_write",
+      "side": "editor",
+      "mutating": true,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "new_path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "new_path"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "scene_inspect": {
+      "name": "scene_inspect",
+      "category": "scene",
+      "description": "Devuelve metadatos de la escena editada: ruta, raíz, número de nodos, señales, scripts, uid.",
+      "permission": "read",
+      "side": "editor",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "scene_open": {
+      "name": "scene_open",
+      "category": "scene",
+      "description": "Abre una escena existente en el editor y devuelve su árbol.",
+      "permission": "read",
+      "side": "editor",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "scene_save": {
+      "name": "scene_save",
+      "category": "scene",
+      "description": "Guarda la escena actualmente editada (o la indicada).",
+      "permission": "scene_write",
+      "side": "editor",
+      "mutating": true,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "scene_tree": {
+      "name": "scene_tree",
+      "category": "scene",
+      "description": "Árbol completo de nodos con id estable, tipo, ruta, script y estado de visibilidad.",
+      "permission": "read",
+      "side": "editor",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "depth": {
+            "type": "integer"
+          },
+          "include_properties": {
+            "type": "boolean"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "scene_validate": {
+      "name": "scene_validate",
+      "category": "scene",
+      "description": "Valida que la escena carga, que los scripts adjuntos compilan y que no hay nodos huérfanos.",
+      "permission": "read",
+      "side": "editor",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "scene_visual_test": {
+      "name": "scene_visual_test",
+      "category": "scene",
+      "description": "Ejecuta la escena de forma aislada, captura una imagen y la compara con un umbral (baseline opcional).",
+      "permission": "runtime",
+      "side": "host",
+      "mutating": false,
+      "timeout_ms": 90000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "scene_path": {
+            "type": "string"
+          },
+          "wait_frames": {
+            "type": "integer"
+          },
+          "resolution": {
+            "type": "string",
+            "default": "640x360"
+          },
+          "baseline": {
+            "type": "string"
+          },
+          "tolerance": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "scene_path",
+          "resolution"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "script_analyze": {
+      "name": "script_analyze",
+      "category": "script",
+      "description": "Análisis estructural: clases, funciones, señales, dependencias (preload/load), nodos referenciados.",
+      "permission": "read",
+      "side": "host",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "script_create": {
+      "name": "script_create",
+      "category": "script",
+      "description": "Crea un script GDScript (o C#) con plantilla opcional y lo registra en el sistema de ficheros.",
+      "permission": "script_write",
+      "side": "host",
+      "mutating": true,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "template": {
+            "type": "string"
+          },
+          "base_type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "script_execute": {
+      "name": "script_execute",
+      "category": "script",
+      "description": "Ejecuta un script de herramienta en el editor (headless) y devuelve stdout/stderr y salida JSON.",
+      "permission": "runtime",
+      "side": "editor",
+      "mutating": true,
+      "timeout_ms": 60000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "args": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "timeout_ms": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "args"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "script_modify": {
+      "name": "script_modify",
+      "category": "script",
+      "description": "Edita un script: reemplazo exacto, reemplazo por regex, inserción o append. Con backup para rollback.",
+      "permission": "script_write",
+      "side": "host",
+      "mutating": true,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "replace",
+              "regex_replace",
+              "insert_at_line",
+              "append",
+              "prepend",
+              "write"
+            ]
+          },
+          "find": {
+            "type": "string"
+          },
+          "replace": {
+            "type": "string"
+          },
+          "line": {
+            "type": "integer"
+          },
+          "content": {
+            "type": "string"
+          },
+          "expected_replacements": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "operation"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "script_read": {
+      "name": "script_read",
+      "category": "script",
+      "description": "Devuelve el código fuente y metadatos (líneas, funciones, señales, clases internas).",
+      "permission": "read",
+      "side": "host",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "start_line": {
+            "type": "integer"
+          },
+          "end_line": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "script_validate": {
+      "name": "script_validate",
+      "category": "script",
+      "description": "Compila el script con godot --check-only y devuelve errores/warnings con línea y columna.",
+      "permission": "read",
+      "side": "host",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "signal_connect": {
+      "name": "signal_connect",
+      "category": "project",
+      "description": "Conecta una señal de un nodo a un método de otro nodo (persistente en la escena).",
+      "permission": "scene_write",
+      "side": "editor",
+      "mutating": true,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "from_id": {
+            "type": "string"
+          },
+          "signal": {
+            "type": "string"
+          },
+          "to_id": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string"
+          },
+          "flags": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "from_id",
+          "signal",
+          "to_id",
+          "method"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "signal_list": {
+      "name": "signal_list",
+      "category": "project",
+      "description": "Lista señales declaradas y conexiones de nodos de la escena editada.",
+      "permission": "read",
+      "side": "editor",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "scene_path": {
+            "type": "string"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "test_create": {
+      "name": "test_create",
+      "category": "test",
+      "description": "Crea un fichero de test GDScript con la plantilla del framework.",
+      "permission": "script_write",
+      "side": "host",
+      "mutating": true,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "cases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "path",
+          "name",
+          "cases"
+        ]
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "test_results": {
+      "name": "test_results",
+      "category": "test",
+      "description": "Devuelve los resultados del último test_run (o de una ejecución concreta).",
+      "permission": "read",
+      "side": "host",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "run_id": {
+            "type": "string"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "test_run": {
+      "name": "test_run",
+      "category": "test",
+      "description": "Ejecuta los tests GDScript del proyecto (framework CerberusTest) headless y devuelve resultados estructurados.",
+      "permission": "runtime",
+      "side": "host",
+      "mutating": true,
+      "timeout_ms": 300000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "directory": {
+            "type": "string"
+          },
+          "pattern": {
+            "type": "string"
+          },
+          "timeout_ms": {
+            "type": "integer"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    },
+    "workspace_status": {
+      "name": "workspace_status",
+      "category": "workspace",
+      "description": "Estado del workspace: agentes, locks activos, cola de ejecución, tareas y cambios sin guardar.",
+      "permission": "read",
+      "side": "editor",
+      "mutating": false,
+      "timeout_ms": 15000,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {},
+        "required": []
+      },
+      "output": {
+        "type": "object"
+      }
+    }
+  }
+}

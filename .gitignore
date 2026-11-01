@@ -1,0 +1,4 @@
+.godot/
+.cerberus/
+build/
+*.import
